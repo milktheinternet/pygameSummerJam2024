@@ -43,7 +43,7 @@ class Star(Vector):
         if 0 <= x < dis.res.x and 0 <= y < dis.res.y:
             if self.mode == self.MODE_SELECT:
                 if not self.card:
-                    self.card = Card()
+                    self.card = Card(self)
                 self.card.draw(game)
                 color = (255, 0, 0)
                 pg.draw.circle(srf, color, (x, y), 1)
