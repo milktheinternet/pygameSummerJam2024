@@ -3,7 +3,7 @@ from random import random
 
 
 class Vector:
-    def __init__(self, x: tuple | float | int = 0.0, y: float | int = 0.0):
+    def __init__(self, x: list | tuple | float | int = 0.0, y: float | int = 0.0):
         if isinstance(x, list) or isinstance(x, tuple):
             self.x, self.y = x
         else:

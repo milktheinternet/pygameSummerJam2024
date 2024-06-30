@@ -12,7 +12,7 @@ class Star(Vector):
         super().__init__()
         self.rendered_at = Vector()
 
-        self.MODE_NORMAL, self.MODE_HOVER, self.MODE_SELECT = 'normal hover select'.split()
+        self.MODE_NORMAL, self.MODE_HOVER, self.MODE_SELECT, self.MODE_ACTIVE = 'normal hover select active'.split()
         self.mode = self.MODE_NORMAL
 
         self.card = None
@@ -27,7 +27,6 @@ class Star(Vector):
             if abs(dv.x) < 5 and abs(dv.y) < 5:
                 if game.click_inst:
                     self.mode = self.MODE_SELECT
-                    game.selected_star.mode = self.MODE_NORMAL
                     game.selected_star = self
                 else:
                     self.mode = self.MODE_HOVER
@@ -46,6 +45,8 @@ class Star(Vector):
                 if not self.card:
                     self.card = Card()
                 self.card.draw(game)
+                color = (255, 0, 0)
+                pg.draw.circle(srf, color, (x, y), 1)
             else:
                 color = (255, 255, 255)
                 if self.mode == self.MODE_HOVER:
@@ -55,7 +56,7 @@ class Star(Vector):
 
 
 class Game:
-    def __init__(self, nstars=1000, res=Vector(320, 240), winres=Vector(500*16//9, 500)):
+    def __init__(self, nstars=1000, winres=Vector(500*16//9, 500), res=Vector(480, 360)):
         self.dis = Display(res, winres)
         self.srf = self.dis.srf
         self.active = True
@@ -100,6 +101,7 @@ class Game:
                 if event.key == pg.K_d:
                     self.right = False
             elif event.type == pg.MOUSEBUTTONDOWN:
+                self.selected_star.mode = self.selected_star.MODE_NORMAL
                 self.click_inst = True
             elif event.type == pg.QUIT:
                 self.active = False
