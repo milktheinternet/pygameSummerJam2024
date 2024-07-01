@@ -11,7 +11,7 @@ def show_progress(p, dis, msg="Loading..."):
     pg.draw.rect(dis.srf, bg, (pos.x, pos.y, size.x, size.y))
     bar_size = Vector(0.9*p, 0.1) * size
     margin = size.x*0.05
-    bar_pos = pos + Vector(margin, size.y - bar_size.y - margin)
+    bar_pos = pos + Vector(margin, (size.y - bar_size.y)/2)
     pg.draw.rect(dis.srf, bar_color, (bar_pos.x, bar_pos.y, bar_size.x, bar_size.y))
 
     msgsrf = font.render(msg, False, (255,255,255), (0,0,0))

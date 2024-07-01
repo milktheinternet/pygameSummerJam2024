@@ -21,6 +21,8 @@ class Card:
         self.wet = self.wet ** 1.1
         self.wet = self.wet * 0.5 + self.wet * math.sin(self.temp*math.pi) * 0.5
 
+        self.pop = 0
+
         self.name = name_planet(self.wet, self.temp)
 
         w = 150
@@ -28,10 +30,10 @@ class Card:
         self.srf = pg.Surface(self.size.tuple)
         self.srf.fill(self.bg)
 
-        self.planet = gen_planet(game, Vector([self.size.x-self.margin*2]*2), star, self.wet, self.temp)
-        self.srf.blit(self.planet, (self.margin, self.margin))
+        self.planet = gen_planet(game, Vector([star.diameter]*2), star, self.wet, self.temp)
+        self.srf.blit(pg.transform.smoothscale(self.planet, [self.size.x-self.margin*2]*2), (self.margin, self.margin))
 
-        self.text = f'NAME:{self.name}\nWET:{percent(self.wet)}\nTEMP:{percent(self.temp)}'
+        self.text = f'NAME:{self.name}\nWET:{percent(self.wet)}\nTEMP:{percent(self.temp)}\nPOP:{self.pop}'
         self.render_text()
 
     def render_text(self):

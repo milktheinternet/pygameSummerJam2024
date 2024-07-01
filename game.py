@@ -5,6 +5,7 @@ pg.init()
 from gamemath import *
 from gamedisplay import Display
 from gamestar import Star
+#import gamemusic
 
 class Game:
     def __init__(self, nstars=1000, winres=Vector(500*16//9, 500), res=Vector(480, 360)):

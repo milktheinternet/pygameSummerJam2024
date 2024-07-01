@@ -67,14 +67,19 @@ def gen_planet(game, size: Vector, star, wet, temperature):
     # Generate and layer terrain noise
     base_seed = int(star.x * 1000 + star.y)
     noise_grid = np.zeros((size.x, size.y))
-    layers = 3  # Adjusted number of layers
+    layers = 3
 
+    def progress(n=1, nmax=1):
+        show_progress(n/nmax, game.dis, msg="Scanning...")
+
+    SCALE = 0.7
     for i in range(layers):
-        show_progress(i/layers, game.dis, msg="Scanning...")
+        progress(i, layers)
         scale = 0.05 * (2 ** i)  # Adjusted scale factor
         weight = 0.5 ** i  # Weight for blending
-        noise_layer = gen_perlin_noise(size, scale, seed=base_seed + i)
+        noise_layer = gen_perlin_noise(size, scale*SCALE, seed=base_seed + i)
         noise_grid += weight * noise_layer
+    progress()
 
     # Normalize noise values to [0, 1]
     noise_grid = (noise_grid - np.min(noise_grid)) / (np.max(noise_grid) - np.min(noise_grid))
