@@ -4,62 +4,7 @@ pg.init()
 
 from gamemath import *
 from gamedisplay import Display
-from gamecard import Card
-
-class Star(Vector):
-    def __init__(self):
-        super().__init__()
-        self.rendered_at = Vector()
-
-        self.MODE_NORMAL, self.MODE_HOVER, self.MODE_SELECT, self.MODE_ACTIVE, self.MODE_ZOOM_IN, self.MODE_ZOOM_OUT = \
-            'normal hover select active zoom-in zoom-out'.split()
-        self.mode = self.MODE_NORMAL
-
-        self.card = None
-
-        self.zoom_anim_time = 0
-        self.zoom_anim_duration = 0
-
-    def random(self):
-        self.x, self.y = (super().random() * tau).tuple
-        return self
-
-    def update(self, game):
-        dv = game.mouse - self.rendered_at
-        if self.mode in (self.MODE_NORMAL, self.MODE_HOVER):
-            if abs(dv.x) < 5 and abs(dv.y) < 5:
-                if game.click_inst:
-                    self.mode = self.MODE_SELECT
-                    game.selected_star = self
-                    game.click_inst = False
-                else:
-                    self.mode = self.MODE_HOVER
-            else:
-                self.mode = self.MODE_NORMAL
-
-    def draw(self, game):
-        cam, dis, srf = game.camera, game.dis, game.srf
-        pos = to_screen(self + cam, dis)
-        if not pos:
-            return
-        self.rendered_at = pos
-        x, y = round(pos).tuple
-        if 0 <= x < dis.res.x and 0 <= y < dis.res.y:
-            if self.mode == self.MODE_SELECT:
-                if not self.card:
-                    self.card = Card(game, self)
-                self.card.draw(game)
-                pg.draw.circle(srf, (255,0,0), (x, y), 2)
-            elif self.mode == self.MODE_NORMAL:
-                color = (255, 255, 255)
-                srf.set_at((x, y), color)
-            elif self.mode == self.MODE_HOVER:
-                pg.draw.circle(srf, (255, 255, 255), (x, y), 5, 1)
-                srf.set_at((x, y), (255, 0, 0))
-            elif self.mode == self.MODE_ACTIVE:
-                srf.blit(self.card.planet)
-
-
+from gamestar import Star
 
 class Game:
     def __init__(self, nstars=1000, winres=Vector(500*16//9, 500), res=Vector(480, 360)):
@@ -67,14 +12,14 @@ class Game:
         self.srf = self.dis.srf
         self.active = True
 
+        self.click_inst = False
+
         self.stars = []
 
         for i in range(nstars):
             star = Star()
             star.random()
             self.stars.append(star)
-
-        self.selected_star = self.stars[-1]
         self.after_render = []
 
         self.camera = Vector()
@@ -86,6 +31,7 @@ class Game:
         self.mouse = Vector(-100, -100)
 
     def update(self):
+
         self.click_inst = False
         for event in pg.event.get():
             if event.type == pg.KEYDOWN:
@@ -107,7 +53,6 @@ class Game:
                 if event.key == pg.K_d:
                     self.right = False
             elif event.type == pg.MOUSEBUTTONDOWN:
-                self.selected_star.mode = self.selected_star.MODE_NORMAL
                 self.click_inst = True
             elif event.type == pg.QUIT:
                 self.active = False
@@ -169,6 +114,6 @@ class Game:
             self.render()
 
 if __name__ == "__main__":
-    demo = Game()
+    demo = Game(winres=Vector(480*2, 360*2))
     demo.start()
     pg.display.quit()

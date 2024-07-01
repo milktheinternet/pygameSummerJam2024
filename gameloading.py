@@ -1,7 +1,7 @@
 import pygame as pg
 from gamemath import Vector
 
-font = pg.font.Font("assets/joystix monospace.otf", 10)
+font = pg.font.Font("assets/font.ttf", 12)
 
 def show_progress(p, dis, msg="Loading..."):
     bg = (0,0,0)
@@ -14,7 +14,7 @@ def show_progress(p, dis, msg="Loading..."):
     bar_pos = pos + Vector(margin, size.y - bar_size.y - margin)
     pg.draw.rect(dis.srf, bar_color, (bar_pos.x, bar_pos.y, bar_size.x, bar_size.y))
 
-    msgsrf = font.render(msg, True, (255,255,255), (0,0,0))
+    msgsrf = font.render(msg, False, (255,255,255), (0,0,0))
     dis.srf.blit(msgsrf, (bar_pos.x, bar_pos.y - msgsrf.get_height()))
 
     dis.update()

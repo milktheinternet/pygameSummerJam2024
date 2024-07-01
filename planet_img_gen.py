@@ -48,7 +48,7 @@ def interpolate_color(start_color, end_color, steps = 10):
         for i in range(steps)
     ]
 
-COLD = (200, 150, 255)
+COLD = (150, 150, 255)
 LUSH = (50, 220, 75)
 HOT = (255, 127, 0)
 LAND = interpolate_color(COLD, LUSH) + interpolate_color(LUSH, HOT)
@@ -58,7 +58,7 @@ def list_float_idx(list_: list, idx: float):
     return list_[int((len(list_)-1)*idx)]
 
 
-def gen_planet(game, size: Vector, star, wet=1.0, temperature=0.5):
+def gen_planet(game, size: Vector, star, wet, temperature):
     srf = pg.Surface(size.tuple, pg.SRCALPHA)
     water = (0, 0, 255)
     land = list_float_idx(LAND, temperature)
