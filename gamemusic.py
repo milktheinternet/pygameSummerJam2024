@@ -1,4 +1,8 @@
-import pygame as pg
+from pygame import mixer_music as mixer
 
-pg.mixer_music.load("assets/winter_vivaldi.mp3")
-pg.mixer_music.play(1000, 0, 0)
+mixer.load("assets/winter_vivaldi.mp3")
+
+
+def play():
+    mixer.play(1_000_000_000)  # if you listen to this one billion times you're a pogchamp
+

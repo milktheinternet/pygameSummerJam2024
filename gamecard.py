@@ -18,21 +18,28 @@ class Card:
         self.margin = 3
         self.wet = random()
         self.temp = random()
+        medtemp = math.sin(self.temp*math.pi)
+        medwet = math.sin(self.wet*math.pi)
         self.wet = self.wet ** 1.1
-        self.wet = self.wet * 0.5 + self.wet * math.sin(self.temp*math.pi) * 0.5
+        self.wet = self.wet * 0.5 + self.wet * medtemp * 0.5
 
-        self.pop = 0
+        maxpop = medtemp * medwet * 100
+        self.pop = int(random() * maxpop)
 
         self.name = name_planet(self.wet, self.temp)
 
         w = 150
         self.size = Vector(w, w*16//9)
         self.srf = pg.Surface(self.size.tuple)
-        self.srf.fill(self.bg)
 
         self.planet = gen_planet(game, Vector([star.diameter]*2), star, self.wet, self.temp)
-        self.srf.blit(pg.transform.smoothscale(self.planet, [self.size.x-self.margin*2]*2), (self.margin, self.margin))
 
+        self.redraw()
+        game.clock.get_time()
+
+    def redraw(self):
+        self.srf.fill(self.bg)
+        self.srf.blit(pg.transform.smoothscale(self.planet, [self.size.x-self.margin*2]*2), (self.margin, self.margin))
         self.text = f'NAME:{self.name}\nWET:{percent(self.wet)}\nTEMP:{percent(self.temp)}\nPOP:{self.pop}'
         self.render_text()
 
