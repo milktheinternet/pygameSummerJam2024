@@ -1,9 +1,10 @@
 import pygame as pg
-from random import random, randint, choice
+from random import random
 from gamemath import Vector
 from planet_img_gen import gen_planet
 from planet_namer import name_planet
 import math
+from gameloading import show_progress
 
 font = pg.font.Font("assets/font.ttf", 12)
 
@@ -28,14 +29,16 @@ class Card:
 
         self.name = name_planet(self.wet, self.temp)
 
-        w = 150
-        self.size = Vector(w, w*16//9)
+        self.size = Vector(150, 266)
         self.srf = pg.Surface(self.size.tuple)
 
-        self.planet = gen_planet(game, Vector([star.diameter]*2), star, self.wet, self.temp)
+        self.planet = gen_planet(Vector([star.diameter]*2), self.wet, self.temp)
 
         self.redraw()
-        game.clock.get_time()
+
+        for i in range(10):
+            show_progress(i/10, game.dis, "Scanning...")
+            game.clock.tick(10)
 
     def redraw(self):
         self.srf.fill(self.bg)

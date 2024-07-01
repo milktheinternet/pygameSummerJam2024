@@ -1,9 +1,15 @@
 import pygame as pg
 from gamemath import Vector
 
-font = pg.font.Font("assets/font.ttf", 12)
+font = None
+if pg.font.get_init():
+    font = pg.font.Font("assets/font.ttf", 12)
 
 def show_progress(p, dis, msg="Loading..."):
+    global font
+    if not font:
+        font = pg.font.Font("assets/font.ttf", 12)
+
     bg = (0,0,0)
     bar_color = (0, 255, 255)
     size = round(dis.res/2)

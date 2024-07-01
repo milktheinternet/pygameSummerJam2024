@@ -3,8 +3,28 @@ import numpy as np
 from gamemath import Vector  # Assuming this is a custom Vector class you have
 from perlin import perlin
 import math
-from gameloading import show_progress
+#from gameloading import show_progress
+from random import randint, choice
 
+
+def save_noise(noise_grid):
+    w, h = len(noise_grid), len(noise_grid[0])
+    srf = pg.Surface((w,h))
+    for x in range(w):
+        for y in range(h):
+            srf.set_at((x,y), [noise_grid[x][y]*255]*3)
+    pg.image.save(srf, f"assets/noise/noise{nextID()}.png")
+
+
+def load_noise(id_):
+    img = pg.image.load(f"assets/noise/noise{id_}.png")
+    w, h = img.get_size()
+    return [[img.get_at((x, y))[0]/255 for x in range(h)] for y in range(w)]
+
+
+NOISE_DIAMETER = 300
+NOISE_CACHE_SIZE = 30
+NOISE_CACHE = [load_noise(id_) for id_ in range(1, NOISE_CACHE_SIZE + 1)]
 
 def make_shadow(radius: int):
     srf = pg.Surface((radius * 2, radius * 2), pg.SRCALPHA)
@@ -57,34 +77,32 @@ LAND = interpolate_color(COLD, LUSH) + interpolate_color(LUSH, HOT)
 def list_float_idx(list_: list, idx: float):
     return list_[int((len(list_)-1)*idx)]
 
+def gen_noise_grid(size, scale_noise=0.7):
+    # Generate and layer terrain noise
+    base_seed = randint(0, 1_000_000_000)
+    noise_grid = np.zeros((size.x, size.y))
+    layers = 3
 
-def gen_planet(game, size: Vector, star, wet, temperature):
+    for i in range(layers):
+        scale = 0.05 * (2 ** i)  # Adjusted scale factor
+        weight = 0.5 ** i  # Weight for blending
+        noise_layer = gen_perlin_noise(size, scale * scale_noise, seed=base_seed + i)
+        noise_grid += weight * noise_layer
+
+    # Normalize noise values to [0, 1]
+    return (noise_grid - np.min(noise_grid)) / (np.max(noise_grid) - np.min(noise_grid))
+
+def gen_planet(size: Vector, wet, temperature):
     srf = pg.Surface(size.tuple, pg.SRCALPHA)
+    srf.fill((0,0,0,0))
     water = (0, 0, 255)
     land = list_float_idx(LAND, temperature)
     radius = int(size.x // 2)
 
-    # Generate and layer terrain noise
-    base_seed = int(star.x * 1000 + star.y)
-    noise_grid = np.zeros((size.x, size.y))
-    layers = 3
-
-    def progress(n=1, nmax=1):
-        show_progress(n/nmax, game.dis, msg="Scanning...")
-
-    SCALE = 0.7
-    for i in range(layers):
-        progress(i, layers)
-        scale = 0.05 * (2 ** i)  # Adjusted scale factor
-        weight = 0.5 ** i  # Weight for blending
-        noise_layer = gen_perlin_noise(size, scale*SCALE, seed=base_seed + i)
-        noise_grid += weight * noise_layer
-    progress()
-
-    # Normalize noise values to [0, 1]
-    noise_grid = (noise_grid - np.min(noise_grid)) / (np.max(noise_grid) - np.min(noise_grid))
+    noise_grid = choice(NOISE_CACHE)
 
     cx, cy = (size / 2).tuple
+
     def dist(x, y):
         return math.sqrt((x - cx) ** 2 + (y - cy) ** 2)
 
@@ -92,7 +110,6 @@ def gen_planet(game, size: Vector, star, wet, temperature):
     for x in range(size.x):
         for y in range(size.y):
             if dist(x, y) > radius - 1:
-                srf.set_at((x, y), (0,0,0,0))
                 continue
 
             elevation = noise_grid[x][y]
@@ -108,3 +125,17 @@ def gen_planet(game, size: Vector, star, wet, temperature):
     srf.blit(make_shadow(radius), (0, 0))
 
     return srf
+
+
+ID = 0
+
+
+def nextID():
+    global ID
+    ID += 1
+    return ID
+
+if __name__ == '__main__':
+    for i in range(NOISE_CACHE_SIZE):
+        print(f'{i}/{NOISE_CACHE_SIZE}')
+        save_noise(gen_noise_grid(Vector(NOISE_DIAMETER, NOISE_DIAMETER)))

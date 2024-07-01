@@ -2,7 +2,7 @@ from gamemath import *
 from gamecard import Card
 import pygame as pg
 
-class Star(Vector):
+class Planet(Vector):
     def __init__(self):
         super().__init__()
 
@@ -53,12 +53,13 @@ class Star(Vector):
                     if game.pop > 0:
                         game.pop -= 1
                         self.card.pop += 1
+                        self.card.redraw()
                         self.people.append(Person(self, tracked=True))
         elif self.mode == self.MODE_SELECT:
             if mouse_over and game.click_inst:
                 game.stars.remove(self)
                 for star in game.stars:
-                    if isinstance(star, Star):
+                    if isinstance(star, Planet):
                         star.deselect()
                 game.stars.insert(0, self)
                 self.mode = self.MODE_ZOOM_IN
@@ -69,7 +70,7 @@ class Star(Vector):
             if mouse_over:
                 if game.click_inst:
                     for star in game.stars:
-                        if isinstance(star, Star):
+                        if isinstance(star, Planet):
                             star.deselect()
                     self.mode = self.MODE_SELECT
                     game.click_inst = False
@@ -121,13 +122,14 @@ class Star(Vector):
 
             def draw_planet():
                 srf.blit(pg.transform.smoothscale(self.card.planet, (w, h)), (x - w // 2, y - h // 2))
-                for person in self.people:
-                    person.draw(game.dis)
+                if self.mode == self.MODE_ACTIVE:
+                    for person in self.people:
+                        person.draw(game.dis)
             game.after_render.append(draw_planet)
 
 
 class Person(Vector):
-    def __init__(self, star: Star, tracked: bool = False):
+    def __init__(self, star: Planet, tracked: bool = False):
         self.star = star
         ONE = Vector(1, 1)
         super().__init__(self.random()*2 - ONE)

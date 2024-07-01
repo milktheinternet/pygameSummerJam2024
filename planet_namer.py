@@ -20,13 +20,9 @@ def name_planet(wet, temp):
     # wet is a humidity value between 0.0 and 1.0
     # temp is a temperature value
     if random() > 0.5:
-        name = list_float_idx(TEMP_PRE, temp) \
-            + ("" if True else choice(MID)) \
-            + list_float_idx(WET_POST, wet)
+        name = list_float_idx(TEMP_PRE, temp) + list_float_idx(WET_POST, wet)
     else:
-        name = list_float_idx(WET_PRE, wet) \
-            + ("" if True else choice(MID)) \
-            + list_float_idx(TEMP_POST, temp)
+        name = list_float_idx(WET_PRE, wet) + list_float_idx(TEMP_POST, temp)
     while name in USED_NAMES:
         name += 'I'
         for target, replacement in (("IIII",  "IV"),

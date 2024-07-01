@@ -1,18 +1,29 @@
+from os import environ
+environ['PYGAME_HIDE_SUPPORT_PROMPT'] = 'TRUE'
+
 import pygame as pg
-__import__('os').environ['PYGAME_HIDE_SUPPORT_PROMPT'] = 'TRUE'
 pg.init()
 
 from gamemath import *
 from gamedisplay import Display
-from gamestar import Star
+from gamestar import Planet
+from gamemenu import Menu
 import gamemusic
 
 font = pg.font.Font("assets/font.ttf", 12)
-font_big = pg.font.Font("assets/font.ttf", 24)
+
+ID = 0
+def nextID():
+    global ID
+    ID += 1
+    return ID
+
+def screenshot(srf: pg.Surface):
+    pg.image.save(srf, f"image{nextID()}.png")
 
 class Game:
-    def __init__(self, nstars=1000, winres=Vector(500*16//9, 500), res=Vector(480, 360)):
-        self.dis = Display(res, winres)
+    def __init__(self, dis:Display, nstars=1000):
+        self.dis = dis
         self.srf = self.dis.srf
         self.active = True
 
@@ -22,7 +33,7 @@ class Game:
         self.stars = []
 
         for i in range(nstars):
-            star = Star()
+            star = Planet()
             star.random()
             self.stars.append(star)
         self.after_render = []
@@ -68,6 +79,18 @@ class Game:
                     self.left = False
                 if event.key == pg.K_d:
                     self.right = False
+                if event.key == pg.K_SPACE:
+                    screenshot(self.srf)
+                if event.key in (pg.K_ESCAPE, pg.K_p):
+                    def on_quit():
+                        self.active = False
+
+                    menu = Menu({
+                        "RESUME": None,
+                        "QUIT": on_quit
+                    }, self.dis)
+                    menu.make_btns()
+                    menu.start()
             elif event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     self.click_inst = True
@@ -150,6 +173,8 @@ class Game:
 
 if __name__ == "__main__":
     gamemusic.play()
-    demo = Game(winres=Vector(480*2, 360*2))
-    demo.start()
-    pg.display.quit()
+    res = Vector(480, 360)
+    winres = None#res * 2
+    dis = Display(res, winres)
+    game = Game(dis)
+    game.start()
