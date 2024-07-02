@@ -86,7 +86,7 @@ class Menu:
             button.update()
 
     def render(self):
-        self.dis.srf.fill((0,0,255))
+        self.dis.srf.fill((0,0,0))
         for button in self.buttons:
             button.render()
         self.dis.update()

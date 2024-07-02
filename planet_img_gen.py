@@ -23,7 +23,7 @@ def load_noise(id_):
 
 
 NOISE_DIAMETER = 300
-NOISE_LAYERS = 6
+NOISE_LAYERS = 5
 NOISE_CACHE_SIZE = 30
 NOISE_CACHE = [load_noise(id_) for id_ in range(1, NOISE_CACHE_SIZE + 1)]
 
@@ -35,7 +35,7 @@ def make_shadow(radius: int):
         pos = Vector(radius * 1.5, radius * 1.5) - Vector(i, i) / 2
         pg.draw.circle(srf, (0, 0, 0, alpha), round(pos).tuple, i)
     return srf
-
+SHADOW = make_shadow(NOISE_DIAMETER//2+1)
 
 def gen_perlin_noise(size: Vector, scale=0.1, seed=None):
     width, height = size.tuple
@@ -52,10 +52,10 @@ def gen_perlin_noise(size: Vector, scale=0.1, seed=None):
     # Generate Perlin-like noise using numpy
     for x in range(width):
         for y in range(height):
-            if dist(x, y) < radius:
-                grid[x][y] = perlin(x * scale, y * scale, seed)
+            if dist(x, y) < radius + 5:
+                grid[x-1][y-1] = perlin(x * scale, y * scale, seed)
             else:
-                grid[x][y] = 0
+                grid[x-1][y-1] = 0
 
     return grid
 
@@ -85,6 +85,7 @@ def gen_noise_grid(size, scale_noise=0.7):
     layers = NOISE_LAYERS
 
     for i in range(layers):
+        print(f'\t{i}/{layers}')
         scale = 0.05 * (2 ** i)  # Adjusted scale factor
         weight = 0.5 ** i  # Weight for blending
         noise_layer = gen_perlin_noise(size, scale * scale_noise, seed=base_seed + i)
@@ -94,7 +95,7 @@ def gen_noise_grid(size, scale_noise=0.7):
     return (noise_grid - np.min(noise_grid)) / (np.max(noise_grid) - np.min(noise_grid))
 
 def gen_planet(size: Vector, wet, temperature):
-    srf = pg.Surface(size.tuple, pg.SRCALPHA)
+    srf = pg.Surface((size+Vector(3,3)).tuple, pg.SRCALPHA)
     srf.fill((0,0,0,0))
     water = (0, 0, 255)
     land = list_float_idx(LAND, temperature)
@@ -123,7 +124,7 @@ def gen_planet(size: Vector, wet, temperature):
             srf.set_at((x, y), color)
 
     # Apply shadow
-    srf.blit(make_shadow(radius), (0, 0))
+    srf.blit(SHADOW, (0, 0))
 
     return srf
 

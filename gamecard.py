@@ -12,7 +12,7 @@ def percent(n: float):
     return f'{round(n*100)}%'
 
 class Card:
-    def __init__(self, game, star, bg=(20,20,20)):
+    def __init__(self, game, star, bg=(0, 0, 0)):
         self.star = star
         self.bg = bg
 
@@ -29,7 +29,7 @@ class Card:
 
         self.name = name_planet(self.wet, self.temp)
 
-        self.size = Vector(150, 266)
+        self.size = Vector(150, 200)
         self.srf = pg.Surface(self.size.tuple)
 
         self.planet = gen_planet(Vector([star.diameter]*2), self.wet, self.temp)
