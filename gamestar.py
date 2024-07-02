@@ -1,11 +1,32 @@
 from gamemath import *
 from gamecard import Card
 import pygame as pg
+from random import randint
+
+STAR_RES = Vector(9, 9)
+STAR_IMG = pg.image.load("assets/beauty/stars.png")
+DISCOVERED_IMG = pg.image.load("assets/beauty/stars_known.png")
+NSTARS = STAR_IMG.get_height()//STAR_RES.y
+STARS = []
+DISCOVERED = []
+
+
+def init_stars():
+    global STARS, STAR_IMG, DISCOVERED_IMG
+    STAR_IMG = STAR_IMG.convert_alpha()
+    DISCOVERED_IMG = DISCOVERED_IMG.convert_alpha()
+    for y in range(0, NSTARS):
+        rect = (0, y*STAR_RES.y, STAR_RES.x, STAR_RES.y)
+        STARS.append(STAR_IMG.subsurface(rect))
+        DISCOVERED.append(DISCOVERED_IMG.subsurface(rect))
 
 
 class Star(Vector):
     def __init__(self, game):
         super().__init__()
+
+        self.twinkle_offset = randint(0, 10000)
+        self.twinkle_dur = 1000
 
         self.game = game
 
@@ -150,17 +171,24 @@ class Star(Vector):
                 person.draw(self.game.dis)
             self.draw_shield(x, y)
 
+    def draw_star(self, x, y):
+        x, y = round(Vector(x, y) - STAR_RES/2).tuple
+        p = ((self.twinkle_offset + self.game.time)/self.twinkle_dur)%1
+        img = (DISCOVERED if self.card else STARS)[int(p*NSTARS)]
+        self.game.srf.blit(img, (x,y))
+
     def draw_supernova(self, x, y):
         game = self.game
         p = (game.time-(self.supernova_at + self.supernova_delay))/self.supernova_dur
-        radius = p * 100
+        radius = p * 100 * (0.8 + (random()-0.5)*(0.2 * 2))
         if p > 1:
-            return#game.stars.remove(self)
+            return
         elif p > 0:
             if -radius <= x < game.dis.res.x + radius and -radius <= y < game.dis.res.y + radius:
                 pg.draw.circle(game.srf, (255, 255, 255), (x, y), radius)
+                if radius < 5: self.draw_star(x, y)
         else:
-            self.game.srf.set_at((x,y), (255,255,255))
+            self.draw_star(x, y)#self.game.srf.set_at((x,y), (255,255,255))
 
     def draw(self):
         game = self.game
@@ -182,11 +210,10 @@ class Star(Vector):
                 self.card.draw(game)
             pg.draw.circle(srf, (255, 0, 0), (x, y), 5)
         elif self.mode == self.MODE_NORMAL:
-            color = (255, 255, 0) if self.card else (255, 255, 255)
-            srf.set_at((x, y), color)
+            self.draw_star(x, y)
         elif self.mode == self.MODE_HOVER:
+            self.draw_star(x, y)
             pg.draw.circle(srf, (255, 255, 255), (x, y), 5, 1)
-            srf.set_at((x, y), (255, 0, 0))
         elif self.mode in (self.MODE_ACTIVE, self.MODE_ZOOM_IN, self.MODE_ZOOM_OUT):
             game.after_render.append(lambda:self.draw_planet(x, y))
         elif self.mode == self.MODE_SUPERNOVA:

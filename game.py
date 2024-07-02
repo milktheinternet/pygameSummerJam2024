@@ -6,10 +6,10 @@ pg.init()
 
 from gamemath import *
 from gamedisplay import Display
-from gamestar import Star
+from gamestar import Star, init_stars
 from gamemenu import Menu
 from gameover import GameOver
-import gamemusic
+from srf_effects import *
 
 font = pg.font.Font("assets/font.ttf", 12)
 ID = 0
@@ -27,6 +27,9 @@ def screenshot(srf: pg.Surface):
 
 class Game:
     def __init__(self, dis:Display, menu: Menu = None, nstars=1000):
+
+        init_stars()
+
         self.menu = menu
 
         self.dis = dis
@@ -58,7 +61,7 @@ class Game:
         self.max_pop = 10
 
         self.time = 1
-        self.max_time = 1000 * 60 * 5 # aka 5 minutes
+        self.max_time = 5000 #1000 * 60 * 5 # aka 5 minutes
 
         self.fade_srf = pg.Surface(self.dis.res.tuple)
         self.fade_duration = 3 * 1000
@@ -78,10 +81,15 @@ class Game:
         self.supernova_srf.fill((255, 255, 255))
 
         self.end_delay = 4000
-        self.end_dur = 500
+        self.end_dur = 2000
+
+        self.gameover_delay = 1000
 
         self.after_supernova = False
         self.survivor = None
+
+        self.scan_effect = 0
+        self.scan_height_range = (5, 10)
 
     def count_abandoned(self):
         return sum([star.card.pop for star in self.stars if star.card and not star.shield])
@@ -212,11 +220,13 @@ class Game:
 
     def start_supernova(self):
         self.supernova_at = self.time
+        self.scan_height_range = (1,5)
         self.shake_for = self.supernova_dur+500
         for star in self.stars:
             star.start_supernova()
 
     def end_supernova(self):
+        self.scan_effect = 0
         self.supernova_at = 0
         self.after_supernova = True
 
@@ -242,6 +252,7 @@ class Game:
 
         if self.supernova_at:
             p = (self.time-self.supernova_at)/self.supernova_dur
+            self.scan_effect = int(p**2*20)
             if p > 1:
                 self.end_supernova()
             self.shake_intensity = 0.04 * p ** 2
@@ -249,13 +260,17 @@ class Game:
             self.srf.blit(self.supernova_srf, (0, 0))
         elif self.after_supernova:
             time_since = self.time - self.max_time - self.supernova_dur
+            if time_since > self.end_delay + self.end_dur + self.gameover_delay:
+                self.end_game()
             if time_since > self.end_delay:
                 p = (time_since - self.end_delay)/self.end_dur
-                if p > 1:
-                    self.end_game()
+                p = min(1, p)
                 yp = p*self.dis.res.y//2+1
                 pg.draw.rect(self.srf, (0, 0, 0), (0, 0, self.dis.res.x, yp))
                 pg.draw.rect(self.srf, (0, 0, 0), (0, self.dis.res.y-yp, self.dis.res.x, yp))
+
+        if self.scan_effect:
+            scanlines(self.srf, self.scan_height_range, (-self.scan_effect, self.scan_effect))
 
     def render(self):
         self.srf.fill((30, 20, 40))

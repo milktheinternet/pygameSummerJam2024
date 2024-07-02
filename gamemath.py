@@ -40,6 +40,13 @@ class Vector:
         else:
             return Vector(self.x/other, self.y/other)
 
+    def __divmod__(self, other):
+        if isinstance(other, Vector):
+            return Vector(self.x//other.x, self.y//other.y)
+        else:
+            return Vector(self.x//other, self.y//other)
+
+
     @staticmethod
     def random():
         return Vector(random(), random())

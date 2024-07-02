@@ -14,7 +14,8 @@ POP_MSGS = {
     500:"YOU COULD HAVE SAVED MORE",
     1000:"A KINGDOM STANDS AT THE EDGE OF THE UNIVERSE",
     2000:"A REAL CONTENDER FOR A FRESH START",
-    3000:"BRING THE UNIVERSE HERE, THEY SAID"
+    3000:"BRING THE UNIVERSE HERE, THEY SAID",
+    10000:"MISSION SUCCESS"
 }
 
 
@@ -34,12 +35,10 @@ def set_highscore(score):
 
 class GameOver(Menu):
     def __init__(self, dis, end_pop, abandoned, visited):
-
         hs = get_highscore()
         if end_pop > hs:
-            end_pop = hs
+            hs = end_pop
             set_highscore(hs)
-
         options = {
             f"YOU RESCUED {end_pop} LIFE FORMS":self.start,
             get_pop_msg(end_pop):self.start,
