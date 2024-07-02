@@ -1,6 +1,6 @@
 import pygame as pg
 from gamemath import Vector
-from gamemenu import Button
+from menus import Button
 from os import listdir
 
 # slideshow paths must end in '/'

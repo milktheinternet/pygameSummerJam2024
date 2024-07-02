@@ -5,9 +5,9 @@ import pygame as pg
 pg.init()
 
 from gamemath import *
-from gamedisplay import Display
-from gamestar import Star, init_stars
-from gamemenu import Menu
+from scaled_display import Display
+from stars import Star, init_stars
+from menus import Menu
 from gameover import GameOver
 from srf_effects import *
 

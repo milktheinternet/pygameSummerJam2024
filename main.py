@@ -1,12 +1,12 @@
 from game import Game
-from gamemenu import Menu
-from gamedisplay import Display
+from menus import Menu
+from scaled_display import Display
 from gamemath import Vector
 from gameover import set_highscore
 
 from slides import Slideshow
 
-import gamemusic
+import music
 # 430-930 sat sun
 
 has_seen_tutorial = 'YES' in open('assets/has_seen_tutorial', 'r').read()
@@ -21,6 +21,9 @@ def tutorial(menu):
 def credits(menu):
     Slideshow(dis, menu, 'credits').start()
 
+def change_music(menu):
+    music.MusicSettings(dis, menu).start()
+
 if __name__ == "__main__":
     res = Vector(480, 360)
     winres = None#res * 2
@@ -30,6 +33,7 @@ if __name__ == "__main__":
         "PLAY": lambda: newgame(menu),
         "TUTORIAL"+("" if has_seen_tutorial else "!"): lambda: tutorial(menu),
         "CREDITS": lambda: credits(menu),
+        "CHANGE MUSIC": lambda: change_music(menu),
         "QUIT": None}, dis)
 
     menu.options["RESET HIGHSCORE"] = lambda: (
@@ -42,14 +46,14 @@ if __name__ == "__main__":
         if music_off in menu.options.keys():del menu.options[music_off]
         menu.options[music_on] = music_off_fun
         menu.make_btns()
-        gamemusic.play()
+        music.play()
         menu.start()
 
     def music_off_fun():
         if music_on in menu.options.keys():del menu.options[music_on]
         menu.options[music_off] = music_on_fun
         menu.make_btns()
-        gamemusic.pause()
+        music.pause()
         menu.start()
 
     music_on_fun()

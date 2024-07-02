@@ -1,4 +1,4 @@
-from gamemenu import Menu
+from menus import Menu
 
 POP_MSGS = {
     0:"YOU HAVE FAILED THE UNIVERSE",
