@@ -137,7 +137,7 @@ class Game:
                 if event.key == pg.K_SPACE:
                     for star in self.stars:
                         star.deselect()
-                if event.key == pg.K_s:
+                if event.key == pg.K_x:
                     screenshot(self.srf)
                 if event.key in (pg.K_ESCAPE, pg.K_p):
                     def on_quit():
