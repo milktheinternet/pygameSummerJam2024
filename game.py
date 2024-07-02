@@ -61,7 +61,7 @@ class Game:
         self.max_pop = 10
 
         self.time = 1
-        self.max_time = 5000 #1000 * 60 * 5 # aka 5 minutes
+        self.max_time = 1000 * 60 * 5 # aka 5 minutes
 
         self.fade_srf = pg.Surface(self.dis.res.tuple)
         self.fade_duration = 3 * 1000

@@ -59,11 +59,12 @@ class Star(Vector):
             self.game.survivor = self
         else:
             self.supernova_at = 0
-            self.supernova_delay = 3000
-            self.supernova_dur = self.game.supernova_dur - self.supernova_delay
+            self.supernova_delay = 3000 * random()
+            self.supernova_fade_dur = 3000
+            self.supernova_dur = self.game.supernova_dur - self.supernova_delay - self.supernova_fade_dur
+
             self.mode = self.MODE_SUPERNOVA
             self.supernova_at = self.game.time
-            self.supernova_delay = self.supernova_delay * random()
 
     def make_shield(self):
         self.shield_at = self.game.time
@@ -182,13 +183,18 @@ class Star(Vector):
         p = (game.time-(self.supernova_at + self.supernova_delay))/self.supernova_dur
         radius = p * 100 * (0.8 + (random()-0.5)*(0.2 * 2))
         if p > 1:
-            return
+            p = 1 - (game.time - self.supernova_at - self.supernova_dur)/self.supernova_fade_dur
+            if p < 0:
+                return
+            v = min(255, max(0, int((p) * 255)))
+            if -radius <= x < game.dis.res.x + radius and -radius <= y < game.dis.res.y + radius:
+                pg.draw.circle(game.srf, (v, v, v), (x, y), radius)
         elif p > 0:
             if -radius <= x < game.dis.res.x + radius and -radius <= y < game.dis.res.y + radius:
                 pg.draw.circle(game.srf, (255, 255, 255), (x, y), radius)
                 if radius < 5: self.draw_star(x, y)
         else:
-            self.draw_star(x, y)#self.game.srf.set_at((x,y), (255,255,255))
+            self.draw_star(x, y)
 
     def draw(self):
         game = self.game
