@@ -23,6 +23,7 @@ def load_noise(id_):
 
 
 NOISE_DIAMETER = 300
+NOISE_LAYERS = 6
 NOISE_CACHE_SIZE = 30
 NOISE_CACHE = [load_noise(id_) for id_ in range(1, NOISE_CACHE_SIZE + 1)]
 
@@ -81,7 +82,7 @@ def gen_noise_grid(size, scale_noise=0.7):
     # Generate and layer terrain noise
     base_seed = randint(0, 1_000_000_000)
     noise_grid = np.zeros((size.x, size.y))
-    layers = 3
+    layers = NOISE_LAYERS
 
     for i in range(layers):
         scale = 0.05 * (2 ** i)  # Adjusted scale factor

@@ -11,18 +11,23 @@ from gamemenu import Menu
 import gamemusic
 
 font = pg.font.Font("assets/font.ttf", 12)
-
 ID = 0
+
+
 def nextID():
     global ID
     ID += 1
     return ID
 
+
 def screenshot(srf: pg.Surface):
-    pg.image.save(srf, f"image{nextID()}.png")
+    pg.image.save(srf, f"assets/screenshots/image{nextID()}.png")
+
 
 class Game:
-    def __init__(self, dis:Display, nstars=1000):
+    def __init__(self, dis:Display, menu: Menu = None, nstars=1000):
+        self.menu = menu
+
         self.dis = dis
         self.srf = self.dis.srf
         self.active = True
@@ -86,8 +91,8 @@ class Game:
                         self.active = False
 
                     menu = Menu({
-                        "RESUME": None,
-                        "QUIT": on_quit
+                        "CONTINUE": None,
+                        "ABANDON THE UNIVERSE": on_quit
                     }, self.dis)
                     menu.make_btns()
                     menu.start()
@@ -170,6 +175,8 @@ class Game:
         while self.active:
             self.update()
             self.render()
+        if self.menu:
+            self.menu.start()
 
 if __name__ == "__main__":
     gamemusic.play()

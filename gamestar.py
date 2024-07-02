@@ -27,7 +27,7 @@ class Planet(Vector):
         return self.diameter/2
 
     def random(self):
-        self.x, self.y = (super().random() * tau).tuple
+        self.x, self.y = ((super().random()-Vector.HALF()) * tau).tuple
         return self
 
     def deselect(self):

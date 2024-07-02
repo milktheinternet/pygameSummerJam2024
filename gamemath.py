@@ -14,6 +14,14 @@ class Vector:
         else:
             self.x, self.y = x.x, x.y
 
+    @staticmethod
+    def HALF():
+        return Vector(0.5, 0.5)
+
+    @staticmethod
+    def ONE():
+        return Vector(1.0, 1.0)
+
     def __add__(self, other):
         return Vector(self.x+other.x, self.y+other.y)
 

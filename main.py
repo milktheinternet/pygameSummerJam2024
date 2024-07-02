@@ -2,13 +2,18 @@ from game import Game
 from gamemenu import Menu
 from gamedisplay import Display
 from gamemath import Vector
+
+from tutorial import Tutorial
+
 import gamemusic
 # 430-930 sat sun
 
 
-def newgame():
-    game = Game(dis)
-    game.start()
+def newgame(menu):
+    Game(dis, menu).start()
+
+def tutorial(menu):
+    Tutorial(dis, menu).start()
 
 if __name__ == "__main__":
     res = Vector(480, 360)
@@ -16,8 +21,8 @@ if __name__ == "__main__":
     dis = Display(res, winres)
 
     menu = Menu({
-        "PLAY": newgame,
-        "TUTORIAL": None,
+        "PLAY": lambda: newgame(menu),
+        "TUTORIAL": lambda: tutorial(menu),
         "QUIT": None}, dis)
     music_on, music_off = "MUSIC: ON", "MUSIC: OFF"
     def music_on_fun():
