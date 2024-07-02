@@ -172,6 +172,11 @@ class Star(Vector):
                 person.draw(self.game.dis)
             self.draw_shield(x, y)
 
+            # display number of people on the planet
+            srf = self.game.font.render(str(self.card.pop), True, (255, 255, 255))
+            size = [2*n for n in srf.get_size()]
+            self.game.srf.blit(pg.transform.scale(srf, size), (x - size[0]//2, y - size[1] - self.radius))
+
     def draw_star(self, x, y):
         x, y = round(Vector(x, y) - STAR_RES/2).tuple
         p = ((self.twinkle_offset + self.game.time)/self.twinkle_dur)%1

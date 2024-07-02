@@ -32,6 +32,8 @@ class Game:
 
         self.menu = menu
 
+        self.font = font
+
         self.dis = dis
         self.srf = self.dis.srf
 

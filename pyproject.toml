@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "Interstellar Abduction Protocol"
+version = "1.0"
+dependencies = [
+  "pygame-ce",
+  "numpy"
+]
+requires-python = ">=3.8"
+authors = [
+  {name = "milktheinternet", email = "milktheninternet@gmail.com"},
+]
+maintainers = [
+  {name = "milktheinternet", email = "milktheninternet@gmail.com"},
+]
+description = "A rougelike game about alien abduction."
+readme = "README.md"
+license = {file = "LICENSE"}
+keywords = []
+classifiers = [
+  "Development Status :: 0 - Alpha",
+  "Programming Language :: Python"
+]
+
+[project.optional-dependencies]
+
+[project.urls]
+Repository = "https://github.com/milktheinternet/pygameSummerJam2024.git"
+"Tutorial" = "https://docs.google.com/presentation/d/13pAbcuoSu8YUZPeq4RTmUU2mEPw5JPAbosoe5BvHhAg/edit?usp=sharing"
