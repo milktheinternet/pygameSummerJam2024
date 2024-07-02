@@ -3,10 +3,14 @@ from gamemath import Vector
 from gamemenu import Button
 from os import listdir
 
-TUT_PATH = "assets/tutorial/slides/"
+# slideshow paths must end in '/'
+TUT_PATH = "assets/slideshows/XX/"
 
-class Tutorial:
-    def __init__(self, dis, menu):
+
+class Slideshow:
+    def __init__(self, dis, menu, name='tutorial'):
+        path = TUT_PATH.replace('XX', name)
+
         self.font = pg.font.Font("assets/font.ttf", 12)
         self.menu = menu
         self.mouse = (0,0)
@@ -16,8 +20,8 @@ class Tutorial:
         self.buttons = []
 
         self.slide = 0
-        self.slideshow = [pg.image.load(TUT_PATH + file).convert()
-                          for file in sorted(listdir(TUT_PATH))
+        self.slideshow = [pg.image.load(path + file).convert()
+                          for file in sorted(listdir(path))
                           if file[-4:]=='.png']
         self.slideshow = [pg.transform.smoothscale(img, self.dis.res.tuple) for img in self.slideshow]
 
