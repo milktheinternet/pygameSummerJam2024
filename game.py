@@ -78,7 +78,7 @@ class Game:
         self.shake = Vector()
 
         self.supernova_at = 0
-        self.supernova_dur = 30 * 1000
+        self.supernova_dur = 15 * 1000 # 10 seconds
         self.supernova_srf = pg.Surface(self.dis.res.tuple)
         self.supernova_srf.fill((255, 255, 255))
 
